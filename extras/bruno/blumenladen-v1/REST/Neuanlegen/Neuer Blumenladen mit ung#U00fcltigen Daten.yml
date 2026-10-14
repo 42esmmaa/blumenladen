@@ -1,0 +1,53 @@
+info:
+  name: Neuen Blumenladen mit ungültigen Daten
+  type: http
+  seq: 3
+
+http:
+  method: POST
+  url: "{{apiUrl}}"
+  headers:
+    - name: X-Version
+      value: 1.0.0
+  body:
+    type: json
+    data: |-
+      {
+          "name": "",
+          "adresse": " ",
+          "telefonnummer": "KEINE_NUMMER",
+          "open": true,
+          "oeffnungszeit": "08:00:00",
+          "schliesszeit": "18:00:00",
+          "leiter": {
+              "vorname": "",
+              "nachname": "",
+              "telefonnummer": "xyz"
+          }
+      }
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test('Fehlermeldungen im Response Body', () => {
+          const { detail } = res.getBody();
+          const props = ['nachname', 'email', 'kategorie', 'geburtsdatum', 'interessen', 'adresse.plz'];
+          props.forEach(prop => expect(detail).to.include(prop));
+        });
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "422"
+    - expression: res.headers['content-type']
+      operator: eq
+      value: application/problem+json
+    - expression: res.body.detail
+      operator: isString
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

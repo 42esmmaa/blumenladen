@@ -1,0 +1,8 @@
+info:
+  name: Neuanlegen
+  type: folder
+  seq: 3
+
+docs:
+  content: Über die REST-Schnittstelle neue Blumenlaeden anlegen
+  type: text/markdown

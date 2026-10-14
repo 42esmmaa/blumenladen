@@ -1,0 +1,50 @@
+# Copyright (C) 2025 - present Juergen Zimmermann, Hochschule Karlsruhe
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# kubectl apply -f route.traefik.yaml
+# kubectl describe HTTPRoute blumenladen-route -n traefik
+# kubectl delete -f route.traefik.yaml
+
+# https://gateway-api.sigs.k8s.io/api-types/httproute
+# https://gateway-api.sigs.k8s.io/guides/http-redirect-rewrite/#rewrites
+# https://doc.traefik.io/traefik/reference/routing-configuration/kubernetes/gateway-api
+
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: blumenladen-route
+  namespace: traefik
+spec:
+  parentRefs:
+    # siehe Gateway Name bei CRD von Traefik
+    # Headlamp:   Custom Resources > gateway.networking.k8s.io > Gateway
+    - name: traefik-gateway
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /blumenlaeden
+      filters:
+        - type: URLRewrite
+          urlRewrite:
+            path:
+              type: ReplacePrefixMatch
+              replacePrefixMatch: /api
+      backendRefs:
+        - name: blumenladen
+          port: 8080
+          # KEIN selbst-signiertes Zertifikat bei HTTPS
+          #port: 8443
+          namespace: acme

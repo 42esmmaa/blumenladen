@@ -1,0 +1,45 @@
+@startuml BlumenladenWriteService
+
+skinparam classAttributeIconSize 0
+
+package org.springframework.stereotype {
+    annotation Service
+}
+
+package java.util {
+    class UUID
+}
+
+package com.acme.blumenladen {
+    package entity {
+        class Blumenladen << entity >>
+    }
+
+    package repository {
+        class BlumenladenRepository << control >> << @Repository >>
+    }
+
+    package service #DDDDDD {
+        class EmailExistsException
+
+        class BlumenladenWriteService << control >> << @Service >> {
+            + create(blumenladen: Blumenladen): Blumenladen
+            + update(blumenladen: Blumenladen, id: UUID)
+            + deleteById(id: UUID)
+        }
+
+        BlumenladenWriteService o--> "1" BlumenladenRepository : repo
+
+        BlumenladenWriteService .right.> Blumenladen
+        BlumenladenWriteService .up.> Service
+        BlumenladenWriteService .up.> UUID
+
+        BlumenladenWriteService ..> EmailExistsException
+    }
+}
+
+hide empty members
+
+footer (c) Blumenladen-Projekt
+
+@enduml

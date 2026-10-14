@@ -1,0 +1,15 @@
+@startuml Sequenzdiagramm
+
+actor Client
+
+boundary BlumenladenController
+control BlumenladenService
+control BlumenladenRepository
+
+Client -> BlumenladenController : GET / getById()
+BlumenladenController -> BlumenladenService : findById()
+BlumenladenService -> BlumenladenRepository : findById()
+
+footer (c) Blumenladen-Projekt
+
+@enduml

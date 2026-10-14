@@ -1,0 +1,68 @@
+# https://doc.traefik.io/traefik/setup/kubernetes
+# helm show values traefik/traefik
+
+ports:
+  # HTTP Entrypoint mit Name 'web'
+  web:
+    port: 80
+    nodePort: 30000
+    # der gesamte Traffic wird umgeleitet ("redirect") an den Entrypoint 'websecure' (s. unten)
+    redirections:
+      entryPoint:
+        to: websecure
+        scheme: https
+        permanent: true
+
+  # HTTPS Entrypoint mit Name 'websecure'
+  websecure:
+    port: 443
+    nodePort: 30001
+
+# Gateway API statt Ingress
+ingressClass:
+  enabled: false
+
+# Provider fuer die Routing-Konfiguration fuer Traefik
+# Gateway API Provider statt Ingress
+providers:
+  kubernetesIngress:
+    enabled: false
+  kubernetesGateway:
+    enabled: true
+
+# Gateway Listener
+gateway:
+  listeners:
+    # HTTP listener fuer den Entrypoint 'web' (s. oben)
+    web:
+      port: 80
+      protocol: HTTP
+      namespacePolicy:
+        # default: nur Routen innerhalb von demselben Namespace (hier: traefik)
+        from: All
+
+    # HTTPS listener fuer den Entrypoint 'websecure' (s. oben)
+    websecure:
+      port: 443
+      protocol: HTTPS  # TLS terminates inside Traefik
+      namespacePolicy:
+        from: All
+      mode: Terminate
+      certificateRefs:
+        - kind: Secret
+          # Secret im Namespace "traefik" mit privatem Schluessel und Zertifikat
+          name: gateway-tls
+          group: ""
+
+logs:
+  general:
+    # TRACE, DEBUG, INFO, WARN, ERROR, FATAL, PANIC
+    level: INFO
+  # https://doc.traefik.io/traefik/observability/access-logs
+  access:
+    # "access logs" aktivieren: default ist Standard Output von Traefik
+    enabled: true
+
+# Dashboard nicht aktivieren
+api:
+  dashboard: false

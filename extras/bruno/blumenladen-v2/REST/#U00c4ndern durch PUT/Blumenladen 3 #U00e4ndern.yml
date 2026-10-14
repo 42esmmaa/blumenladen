@@ -1,0 +1,50 @@
+info:
+  name: Blumenladen 3 ändern
+  type: http
+  seq: 1
+
+http:
+  method: PUT
+  url: "{{apiUrl}}/:id"
+  headers:
+    - name: If-Match
+      value: '"0"'
+    - name: X-Version
+      value: 2.0.0
+  params:
+    - name: id
+      value: 10000003-0000-7000-8000-000000000000
+      type: path
+  body:
+    type: json
+    data: |-
+      {
+          "name": "Blueten Fischer Neu",
+          "adresse": "Pfinztalstr. 8, 76227 Karlsruhe",
+          "telefonnummer": "+49 721 4444400",
+          "open": false,
+          "oeffnungszeit": "09:00:00",
+          "schliesszeit": "17:00:00",
+          "leiter": {
+              "vorname": "Maria",
+              "nachname": "Fischer",
+              "telefonnummer": "+49 721 4444444"
+          }
+      }
+  auth: inherit
+
+runtime:
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "204"
+    - expression: res.body
+      operator: isString
+    - expression: res.body
+      operator: isEmpty
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

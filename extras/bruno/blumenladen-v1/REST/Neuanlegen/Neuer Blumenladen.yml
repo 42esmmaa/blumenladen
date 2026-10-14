@@ -1,0 +1,47 @@
+info:
+  name: Neuer Blumenladen
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{apiUrl}}"
+  headers:
+    - name: X-Version
+      value: 1.0.0
+  body:
+    type: json
+    data: |-
+      {
+          "name": "Blumen Müller",
+          "adresse": "Hauptstraße 1, 76133 Karlsruhe",
+          "telefonnummer": "+49 721 123456",
+          "open": true,
+          "oeffnungszeit": "08:00:00",
+          "schliesszeit": "18:00:00",
+          "leiter": {
+              "vorname": "Max",
+              "nachname": "Müller",
+              "telefonnummer": "+49 721 654321"
+          }
+      }
+  auth: inherit
+
+runtime:
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "201"
+    - expression: res.headers.location
+      operator: matches
+      value: /api/[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}$
+    - expression: res.body
+      operator: isString
+    - expression: res.body
+      operator: isEmpty
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

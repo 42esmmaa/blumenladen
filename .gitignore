@@ -1,0 +1,30 @@
+out
+build
+target
+.gradle
+gradle.properties
+*.idea
+*.iml
+*.ipr
+*.iws
+src/main/resources/.reloadtrigger
+.kpt-pipeline
+extras/kubernetes/postgres/.kpt-pipeline
+
+# Sensible Daten
+extras/compose/db/postgres/password.txt
+src/main/resources/private-key.pem
+
+# --- lokal erzeugte bzw. vertrauliche Dateien (nicht ins Repository) ---
+.claude/
+.DS_Store
+*.pem
+*.key
+*.crt
+*.p12
+**/password.txt
+.terraform/
+*.tfstate
+*.tfstate.*
+*.lnk
+__EIGENES_PROJEKT*

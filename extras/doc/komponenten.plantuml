@@ -1,0 +1,47 @@
+@startuml Komponenten
+
+left to right direction
+
+package com.acme.blumenladen #DDDDDD {
+    package controller <<boundary>> #FFFFFF {
+        [@RestController\nBlumenladenController] as BlumenladenController
+        [@Controller\nBlumenladenWriteController] as BlumenladenWriteController
+    }
+
+    package service <<control>> #FFFFFF {
+        [@Service\nBlumenladenService] as BlumenladenService
+        [@Service\nBlumenladenWriteService] as BlumenladenWriteService
+    }
+
+    package repository <<control>> #FFFFFF {
+        [BlumenladenRepository]
+    }
+
+    package entity <<entity>> #FFFFFF {
+        [Blumenladen]
+        [Blume]
+        [Leiter]
+    }
+}
+
+RESTClient ~~> [BlumenladenController]
+RESTClient ~~> [BlumenladenWriteController]
+
+[BlumenladenController] o--> [BlumenladenService]
+[BlumenladenWriteController] o--> [BlumenladenWriteService]
+
+[BlumenladenController] .up.> [Blumenladen]
+[BlumenladenWriteController] .up.> [Blumenladen]
+
+[BlumenladenService] o--> [BlumenladenRepository]
+[BlumenladenWriteService] o--> [BlumenladenRepository]
+
+[BlumenladenService] ..> [Blumenladen]
+[BlumenladenWriteService] ..> [Blumenladen]
+
+[Blumenladen] *--> [Blume]
+[Blumenladen] *--> [Leiter]
+
+footer (c) Blumenladen-Projekt
+
+@enduml

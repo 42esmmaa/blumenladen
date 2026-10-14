@@ -1,0 +1,46 @@
+info:
+  name: Nicht-vorhandenen Blumenladen ändern
+  type: http
+  seq: 4
+
+http:
+  method: PUT
+  url: "{{apiUrl}}/:id"
+  headers:
+    - name: If-Match
+      value: '"0"'
+    - name: X-Version
+      value: 1.0.0
+  params:
+    - name: id
+      value: FFFFFFFF-FFFF-7000-8000-FFFFFFFFFFFF
+      type: path
+  body:
+    type: json
+    data: |-
+      {
+          "name": "Nicht Vorhanden",
+          "adresse": "Teststraße 1, 76133 Karlsruhe",
+          "telefonnummer": "+49 721 999999",
+          "open": false,
+          "oeffnungszeit": "09:00:00",
+          "schliesszeit": "17:00:00",
+          "leiter": {
+              "vorname": "Test",
+              "nachname": "Testput",
+              "telefonnummer": "+49 721 888888"
+          }
+      }
+  auth: inherit
+
+runtime:
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "404"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

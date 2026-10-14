@@ -1,0 +1,74 @@
+@startuml BlumenladenController
+
+skinparam classAttributeIconSize 0
+
+package org.springframework {
+    package web.bind.annotation {
+        annotation RestController
+        annotation RequestMapping
+        annotation PathVariable
+        annotation RequestParam
+        annotation ExceptionHandler
+        annotation ResponseStatus
+    }
+
+    package http {
+        class ResponseEntity<T>
+    }
+    package util {
+        class MultiValueMap<K,V>
+    }
+}
+
+package java.util {
+    interface Collection
+    class UUID
+}
+
+package com.acme.blumenladen {
+    package entity {
+        class Blumenladen
+    }
+    package service {
+        class BlumenladenService << control >> << @Service >>
+        class NotFoundException
+
+        BlumenladenService .right[hidden].> Blumenladen
+    }
+
+    package controller #DDDDDD {
+        class BlumenladenDTO << entity >>
+
+        class BlumenladenController << boundary >> << @RestController >> << @RequestMapping >> {
+            ~ @GetMapping getById(@PathVariable id: UUID): Blumenladen
+            ~ @GetMapping get(@RequestParam queryParams: MultiValueMap<String, String>): Collection<Blumenladen>
+        }
+
+        class GlobalExceptionHandler << @ControllerAdvice >> {
+            ~ @ExceptionHandler @ResponseStatus onNotFound(ex: NotFoundException)
+        }
+
+        BlumenladenController o--> "1" BlumenladenService : service
+
+        BlumenladenController .up.> RestController
+        BlumenladenController .up.> RequestMapping
+        BlumenladenController .up.> PathVariable
+        BlumenladenController .up.> RequestParam
+        BlumenladenController .up.> ResponseEntity
+        BlumenladenController .up.> MultiValueMap
+        BlumenladenController .down.> Blumenladen
+
+        GlobalExceptionHandler .up.> ExceptionHandler
+        GlobalExceptionHandler .up.> ResponseStatus
+        GlobalExceptionHandler ..> NotFoundException
+
+        BlumenladenController .right.> UUID
+        BlumenladenController ..> Collection
+    }
+}
+
+hide empty members
+
+footer (c) Blumenladen-Projekt
+
+@enduml

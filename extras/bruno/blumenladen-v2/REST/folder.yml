@@ -1,0 +1,13 @@
+info:
+  name: REST
+  type: folder
+  seq: 1
+
+request:
+  auth: inherit
+  variables:
+    - name: apiUrl
+      value: "{{baseUrl}}/api"
+    - name: apiUrl
+      value: "{{baseUrl}}/blumenlaeden"
+      disabled: true

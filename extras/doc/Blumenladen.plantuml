@@ -1,0 +1,84 @@
+@startuml Blumenladen
+
+skinparam classAttributeIconSize 0
+
+package java {
+    package util {
+        class UUID
+        interface List<T>
+        class Currency
+    }
+
+    package math {
+        class BigDecimal
+    }
+
+    package time {
+        class LocalDate
+    }
+}
+
+package com.acme.blumenladen.entity #DDDDDD {
+
+    enum BlumenFarbeType {
+        ROT
+        WEISS
+        GELB
+        ROSA
+        LILA
+        ORANGE
+    }
+
+    enum BlumenTypType {
+        ROSE
+        TULPE
+        SONNENBLUME
+        ORCHIDEE
+        LILIE
+        NELKE
+    }
+
+    class Blume {
+        name: String
+        typ: BlumenTypType
+        farbe: BlumenFarbeType
+        preis: BigDecimal
+        waehrung: Currency
+        saison: String
+        verfuegbar: boolean
+    }
+
+    class Leiter {
+        vorname: String
+        nachname: String
+        email: String
+        telefon: String
+    }
+
+    class Blumenladen << entity >> {
+        id: UUID
+        name: String
+        email: String
+        telefon: String
+        gruendungsdatum: LocalDate
+        oeffnungszeiten: String
+    }
+
+    Blumenladen *--> "1..*" Blume : blumen
+    Blumenladen *--> "1" Leiter : leiter
+
+    Blumenladen ..> UUID
+    Blumenladen ..> LocalDate
+    Blumenladen ..> List
+
+    Blume .up.> BlumenFarbeType
+    Blume .up.> BlumenTypType
+    Blume ..> BigDecimal
+    Blume ..> Currency
+}
+
+hide empty members
+
+footer (c) Blumenladen-Projekt
+
+@enduml

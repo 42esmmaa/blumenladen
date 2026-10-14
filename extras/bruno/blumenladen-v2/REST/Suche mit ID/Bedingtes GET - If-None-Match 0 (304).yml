@@ -1,0 +1,32 @@
+info:
+  name: Bedingtes GET - If-None-Match "0" (304)
+  type: http
+  seq: 5
+
+http:
+  method: GET
+  url: "{{apiUrl}}/:id"
+  headers:
+    - name: Accept
+      value: application/json
+    - name: X-Version
+      value: 1.0.0
+    - name: If-None-Match
+      value: '"0"'
+  params:
+    - name: id
+      value: 10000001-0000-7000-8000-000000000000
+      type: path
+  auth: inherit
+
+runtime:
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "304"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

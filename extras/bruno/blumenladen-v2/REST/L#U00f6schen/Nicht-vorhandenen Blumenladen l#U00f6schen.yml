@@ -1,0 +1,33 @@
+info:
+  name: Nicht-vorhandenen Blumenladen löschen
+  type: http
+  seq: 2
+
+http:
+  method: DELETE
+  url: "{{apiUrl}}/:id"
+  headers:
+    - name: If-Match
+      value: '"0"'
+    - name: X-Version
+      value: 1.0.0
+  params:
+    - name: id
+      value: ffffffff-ffff-7000-9000-ffffffffffff
+      type: path
+  body:
+    type: json
+    data: ""
+  auth: inherit
+
+runtime:
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "404"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

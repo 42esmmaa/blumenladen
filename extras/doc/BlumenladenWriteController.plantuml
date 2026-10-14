@@ -1,0 +1,96 @@
+@startuml BlumenladenWriteController
+
+skinparam classAttributeIconSize 0
+
+package org.springframework {
+    package stereotype {
+        annotation Controller
+    }
+
+    package web {
+        interface ErrorResponse
+
+        package bind {
+            class MethodArgumentNotValidException
+
+            package annotation {
+                annotation RequestMapping
+                annotation PathVariable
+                annotation RequestBody
+                annotation ExceptionHandler
+            }
+
+            RequestMapping .down[hidden].> MethodArgumentNotValidException
+            PathVariable .right[hidden].> RequestMapping
+            Controller .right[hidden].> PathVariable
+        }
+    }
+
+    package http {
+        class ResponseEntity<T>
+
+        package converter {
+            class HttpMessageNotReadableException
+        }
+    }
+}
+
+package jakarta.servlet.http {
+    interface HttpServletRequest
+
+    HttpMessageNotReadableException .down[hidden].> HttpServletRequest
+}
+
+package java.util {
+    interface Collection<T>
+    class UUID
+
+    UUID .up[hidden].> Collection
+    Collection .up[hidden].> HttpServletRequest
+}
+
+package com.acme.blumenladen {
+    package service {
+        class BlumenladenWriteService << control >> << @Service >>
+        class EmailExistsException
+    }
+
+    package controller #DDDDDD {
+        class BlumenladenDTO << entity >>
+
+        class BlumenladenWriteController << boundary >> << @Controller >> << @RequestMapping >> {
+            ~ @PostMapping post(@RequestBody dto: BlumenladenDTO, request: HttpServletRequest): ResponseEntity<Void>
+            ~ @PutMapping put(@PathVariable id: UUID, @RequestBody dto: BlumenladenDTO)
+            ~ @DeleteMapping deleteById(@PathVariable id: UUID)
+
+            ~ @ExceptionHandler onConstraintViolations(ex: MethodArgumentNotValidException): ErrorResponse
+            ~ @ExceptionHandler onEmailExists(ex: EmailExistsException): ErrorResponse
+            ~ @ExceptionHandler onMessageNotReadable(ex: HttpMessageNotReadableException): ErrorResponse
+        }
+
+        BlumenladenWriteController o-down-> "1" BlumenladenWriteService : service
+        BlumenladenWriteController ..> BlumenladenDTO
+        BlumenladenWriteController ..> EmailExistsException
+
+        BlumenladenWriteController .up.> ResponseEntity
+        BlumenladenWriteController .up.> ErrorResponse
+        BlumenladenWriteController .up.> HttpMessageNotReadableException
+        BlumenladenWriteController .left.> HttpServletRequest
+
+        BlumenladenWriteController .up.> Controller
+        BlumenladenWriteController .up.> RequestMapping
+        BlumenladenWriteController .up.> PathVariable
+        BlumenladenWriteController .up.> RequestBody
+        BlumenladenWriteController .up.> ExceptionHandler
+        BlumenladenWriteController .up.> MethodArgumentNotValidException
+
+        BlumenladenWriteController .right.> UUID
+        BlumenladenWriteController .right.> Collection
+    }
+}
+
+hide empty members
+
+footer (c) Blumenladen-Projekt
+
+@enduml
